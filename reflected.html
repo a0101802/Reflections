@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReflectED</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#F6F4EF;color:#1A1814;min-height:100vh;font-size:15px;line-height:1.6}
+.page{display:none}
+.page.on{display:block}
+#pgLogin.on,#pgRegister.on,#pgAdminLogin.on{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:#F6F4EF}
+.login-wrap{background:#fff;border:1px solid #E2DDD5;border-radius:20px;padding:2.5rem;width:100%;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.logo-block{width:52px;height:52px;background:#3D5AFE;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:1.5rem}
+.login-title{font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:4px}
+.login-sub{font-size:13px;color:#7A7569;margin-bottom:1.75rem}
+.lbl{display:block;font-size:11px;font-weight:600;color:#7A7569;text-transform:uppercase;letter-spacing:.06em;margin:14px 0 5px}
+input[type=text],input[type=password],input[type=email],select,textarea{width:100%;padding:10px 13px;border:1px solid #E2DDD5;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:#fff;color:#1A1814;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:#3D5AFE;box-shadow:0 0 0 3px rgba(61,90,254,.12)}
+textarea{resize:vertical;min-height:80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:8px;border:1px solid #E2DDD5;background:#fff;color:#1A1814;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap}
+.btn:hover{background:#F0EDE6}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-primary{background:#3D5AFE;color:#fff;border-color:#3D5AFE}
+.btn-primary:hover{background:#1A2FCC;border-color:#1A2FCC}
+.btn-danger{background:#FDEEF0;color:#9B2335;border-color:#F5C5CB}
+.btn-ghost{background:transparent;border-color:transparent;color:#7A7569}
+.btn-ghost:hover{background:#F0EDE6;color:#1A1814}
+.btn-full{width:100%}
+.btn-sm{padding:6px 12px;font-size:12px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;border:1px solid}
+.alert-err{background:#FDEEF0;color:#9B2335;border-color:#F5C5CB}
+.alert-ok{background:#E8F5EE;color:#1B7A4A;border-color:#B6DFC8}
+.alert-info{background:#EEF1FF;color:#1A2FCC;border-color:#C5CFFE}
+.alert-warn{background:#FEF4E2;color:#92600A;border-color:#FAD68C}
+.topbar{background:#fff;border-bottom:1px solid #E2DDD5;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:50}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-logo{width:32px;height:32px;background:#3D5AFE;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.topbar-name{font-family:'DM Serif Display',serif;font-size:18px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;background:#EEF1FF;color:#3D5AFE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-blue{background:#EEF1FF;color:#1A2FCC}
+.badge-green{background:#E8F5EE;color:#1B7A4A}
+.badge-amber{background:#FEF4E2;color:#92600A}
+.badge-red{background:#FDEEF0;color:#9B2335}
+.badge-gray{background:#F0EDE6;color:#7A7569}
+.tabbar{display:flex;gap:2px;border-bottom:1px solid #E2DDD5;padding:0 2rem;background:#fff;overflow-x:auto}
+.tab-btn{padding:14px 16px;font-size:13px;font-weight:500;border:none;background:transparent;cursor:pointer;color:#7A7569;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:#1A1814}
+.tab-btn.on{color:#3D5AFE;border-bottom-color:#3D5AFE}
+.tab-panel{display:none}.tab-panel.on{display:block}
+.content{padding:2rem;max-width:900px;margin:0 auto}
+.card{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:12px}
+.section-title{font-size:15px;font-weight:600;margin-bottom:1rem}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:10px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:1rem 1.25rem}
+.stat-num{font-size:28px;font-weight:600;line-height:1}
+.stat-label{font-size:12px;color:#7A7569;margin-top:4px}
+.bar{height:6px;border-radius:3px;background:#F0EDE6;overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;border-radius:3px;background:#3D5AFE;transition:width .5s}
+.bar-fill.green{background:#1B7A4A}
+.bar-fill.amber{background:#92600A}
+.level-banner{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem}
+.level-icon{font-size:36px;flex-shrink:0}
+.level-info{flex:1}
+.level-name{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:2px}
+.xp-bar{height:8px;border-radius:4px;background:#F0EDE6;overflow:hidden;margin-top:6px}
+.xp-fill{height:100%;border-radius:4px;background:#3D5AFE;transition:width .5s}
+.topic-card{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.topic-card:hover{border-color:#3D5AFE;box-shadow:0 2px 8px rgba(61,90,254,.1)}
+.topic-card.done{background:#EEF1FF;border-color:#C5CFFE}
+.cohort-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.cohort-bar{flex:1;height:4px;border-radius:2px;background:#F0EDE6;overflow:hidden}
+.cohort-fill{height:100%;border-radius:2px;background:#1B7A4A}
+.cohort-label{font-size:11px;color:#7A7569;white-space:nowrap}
+.ch-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#7A7569;margin:1.5rem 0 8px;padding:4px 10px;background:#F0EDE6;border-radius:6px;display:inline-block}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:20px;padding:1.75rem;width:100%;max-width:580px;margin:auto;position:relative}
+.modal-close{position:absolute;top:1rem;right:1rem;background:#F0EDE6;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#7A7569}
+.modal-close:hover{background:#E2DDD5}
+.conf-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.conf-btn{padding:7px 14px;border-radius:8px;border:1px solid #E2DDD5;background:#fff;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.conf-btn.low{background:#FDEEF0;border-color:#F5C5CB;color:#9B2335}
+.conf-btn.med{background:#FEF4E2;border-color:#FAD68C;color:#92600A}
+.conf-btn.high{background:#E8F5EE;border-color:#B6DFC8;color:#1B7A4A}
+.pw-box{font-family:monospace;font-size:15px;letter-spacing:1.5px;padding:10px 14px;background:#F0EDE6;border:1px solid #E2DDD5;border-radius:8px;font-weight:600}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid #E2DDD5}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th{padding:10px 14px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#7A7569;border-bottom:1px solid #E2DDD5;background:#FAFAF8;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #F0EDE6;color:#1A1814;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF8}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #E2DDD5;border-top-color:#3D5AFE;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:3rem;color:#7A7569;font-size:14px}
+.review-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.review-tag{background:#F0EDE6;color:#7A7569;padding:3px 10px;border-radius:20px;font-size:12px}
+.search-bar{padding:8px 12px;border:1px solid #E2DDD5;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;width:220px;background:#fff;color:#1A1814}
+.search-bar:focus{border-color:#3D5AFE;box-shadow:0 0 0 2px rgba(61,90,254,.1)}
+.filter-row{display:flex;gap:10px;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+select.filter-sel{padding:8px 12px;border:1px solid #E2DDD5;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;background:#fff;color:#1A1814;cursor:pointer}
+.response-card{background:#fff;border:1px solid #E2DDD5;border-radius:12px;padding:1.25rem;margin-bottom:10px}
+.response-card .rc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.response-card .rc-body{font-size:13px;color:#444;line-height:1.7;background:#FAFAF8;padding:10px 14px;border-radius:8px;border:1px solid #F0EDE6}
+hr{border:none;border-top:1px solid #E2DDD5;margin:1.25rem 0}
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="pgLogin" class="page on">
+  <div class="login-wrap">
+    <div class="logo-block">📚</div>
+    <div class="login-title">ReflectED</div>
+    <div class="login-sub">Student Reflection Portal</div>
+    <div id="loginMsg"></div>
+    <label class="lbl">Username</label>
+    <input type="text" id="loginUser" placeholder="Your username" autocomplete="username">
+    <label class="lbl">Password</label>
+    <input type="password" id="loginPass" placeholder="Your password" autocomplete="current-password">
+    <div class="mt16"><button class="btn btn-primary btn-full" id="loginBtn" onclick="doLogin()">Log in</button></div>
+    <div class="mt8"><button class="btn btn-ghost btn-full" onclick="goPage('pgRegister')" style="font-size:12px">New student? Create your account →</button></div>
+    <div class="mt8"><button class="btn btn-ghost btn-full" onclick="goPage('pgAdminLogin')" style="font-size:12px">Teacher / Admin access →</button></div>
+  </div>
+</div>
+
+<!-- ==================== SELF REGISTRATION ==================== -->
+<div id="pgRegister" class="page">
+  <div class="login-wrap" style="max-width:440px">
+    <div class="logo-block" style="background:#1B7A4A">✏️</div>
+    <div class="login-title">Create your account</div>
+    <div class="login-sub">Your name must match the class roster</div>
+    <div id="regMsg"></div>
+    <div class="g2">
+      <div>
+        <label class="lbl">Full name</label>
+        <input type="text" id="regName" placeholder="e.g. Alice Tan">
+      </div>
+      <div>
+        <label class="lbl">Class</label>
+        <input type="text" id="regClass" placeholder="e.g. 4A">
+      </div>
+    </div>
+    <label class="lbl">Choose a username</label>
+    <input type="text" id="regUser" placeholder="e.g. alice.tan (no spaces)">
+    <label class="lbl">Choose a password</label>
+    <input type="password" id="regPass" placeholder="At least 6 characters">
+    <label class="lbl">Confirm password</label>
+    <input type="password" id="regPass2" placeholder="Repeat password">
+    <div class="mt16"><button class="btn btn-primary btn-full" id="regBtn" onclick="doRegister()">Create account</button></div>
+    <div class="mt8"><button class="btn btn-ghost btn-full" onclick="goPage('pgLogin')" style="font-size:12px">← Back to login</button></div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN LOGIN ==================== -->
+<div id="pgAdminLogin" class="page">
+  <div class="login-wrap">
+    <div class="logo-block" style="background:#1A1814">🔑</div>
+    <div class="login-title">Admin access</div>
+    <div class="login-sub">For teachers only</div>
+    <div id="adminLoginMsg"></div>
+    <label class="lbl">Admin password</label>
+    <input type="password" id="adminPassInput" placeholder="Enter admin password">
+    <div class="mt16"><button class="btn btn-primary btn-full" onclick="doAdminLogin()">Log in as admin</button></div>
+    <div class="mt8"><button class="btn btn-ghost btn-full" onclick="goPage('pgLogin')" style="font-size:12px">← Back</button></div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN PANEL ==================== -->
+<div id="pgAdmin" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">📚</div>
+      <div class="topbar-name">ReflectED</div>
+      <span class="badge badge-gray" style="margin-left:6px">Admin</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-sm" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+  <div class="tabbar" id="adminTabBar">
+    <button class="tab-btn on"  onclick="adminTab('taOverview',0)">Dashboard</button>
+    <button class="tab-btn"     onclick="adminTab('taRoster',1)">Roster</button>
+    <button class="tab-btn"     onclick="adminTab('taCurriculum',2)">Curriculum</button>
+    <button class="tab-btn"     onclick="adminTab('taByStudent',3)">By student</button>
+    <button class="tab-btn"     onclick="adminTab('taByTopic',4)">By topic</button>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="taOverview" class="tab-panel on">
+      <div class="section-title">Overview</div>
+      <div class="g4" id="adminStats" style="margin-bottom:1.5rem">
+        <div class="stat"><div class="spinner"></div></div>
+      </div>
+      <div class="g2" style="margin-bottom:1.5rem">
+        <div>
+          <div class="section-title">Registration status by class</div>
+          <div id="classBreakdown"></div>
+        </div>
+        <div>
+          <div class="section-title">Topic completion</div>
+          <div id="topicCompletionOverview"></div>
+        </div>
+      </div>
+      <div class="section-title">Students not yet registered</div>
+      <div id="unregisteredList"></div>
+    </div>
+
+    <!-- ROSTER -->
+    <div id="taRoster" class="tab-panel">
+      <div class="section-head">
+        <div class="section-title" style="margin:0">Class roster</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="showAddRosterModal()">+ Add student</button>
+          <button class="btn btn-sm" onclick="showCsvModal()">⬆ Import CSV</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <input type="text" class="search-bar" id="rosterSearch" placeholder="Search name..." oninput="filterRoster()">
+        <select class="filter-sel" id="rosterClassFilter" onchange="filterRoster()">
+          <option value="">All classes</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Class</th><th>Registered?</th><th>Username</th><th>Actions</th></tr></thead>
+          <tbody id="rosterTbody"><tr><td colspan="5" class="empty"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CURRICULUM -->
+    <div id="taCurriculum" class="tab-panel">
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="section-title">Add topic</div>
+        <div class="g2">
+          <div><label class="lbl">Chapter</label><input type="text" id="newChapter" placeholder="e.g. Chapter 3"></div>
+          <div><label class="lbl">Topic name</label><input type="text" id="newTopic" placeholder="e.g. Photosynthesis"></div>
+        </div>
+        <label class="lbl">Reflection prompt</label>
+        <textarea id="newPrompt" placeholder="What should students reflect on?"></textarea>
+        <div class="mt12"><button class="btn btn-primary" id="addTopicBtn" onclick="addTopic()">Add topic</button></div>
+      </div>
+      <div class="section-title">Curriculum (<span id="topicCount">0</span> topics)</div>
+      <div id="topicAdminList"></div>
+    </div>
+
+    <!-- BY STUDENT -->
+    <div id="taByStudent" class="tab-panel">
+      <div class="section-title">View responses by student</div>
+      <div class="filter-row">
+        <select class="filter-sel" id="stuClassFilter" onchange="loadStudentFilter()">
+          <option value="">All classes</option>
+        </select>
+        <select class="filter-sel" id="stuPicker" onchange="loadStudentResponses()">
+          <option value="">Select a student...</option>
+        </select>
+      </div>
+      <div id="studentResponses"></div>
+    </div>
+
+    <!-- BY TOPIC -->
+    <div id="taByTopic" class="tab-panel">
+      <div class="section-title">View responses by topic</div>
+      <div class="filter-row">
+        <select class="filter-sel" id="topicPicker" onchange="loadTopicResponses()">
+          <option value="">Select a topic...</option>
+        </select>
+        <select class="filter-sel" id="topicClassFilter" onchange="loadTopicResponses()">
+          <option value="">All classes</option>
+        </select>
+        <select class="filter-sel" id="topicConfFilter" onchange="loadTopicResponses()">
+          <option value="">All confidence levels</option>
+          <option value="high">🟢 Confident</option>
+          <option value="medium">🟡 Getting there</option>
+          <option value="low">🔴 Not confident</option>
+        </select>
+      </div>
+      <div id="topicStats2" style="margin-bottom:1rem"></div>
+      <div id="topicResponses"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== STUDENT APP ==================== -->
+<div id="pgStudent" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">📚</div>
+      <div class="topbar-name">ReflectED</div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar" id="stuAvatar"></div>
+      <div>
+        <div style="font-size:13px;font-weight:500" id="stuNameTop"></div>
+        <div style="font-size:11px;color:#7A7569" id="stuClassTop"></div>
+      </div>
+      <button class="btn btn-sm" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+  <div class="tabbar" id="stuTabBar">
+    <button class="tab-btn on"  onclick="stuTab('tsDash',0)">Dashboard</button>
+    <button class="tab-btn"     onclick="stuTab('tsReflect',1)">Reflect</button>
+    <button class="tab-btn"     onclick="stuTab('tsNotes',2)">My notes</button>
+  </div>
+  <div class="content">
+    <div id="tsDash" class="tab-panel on">
+      <div class="level-banner">
+        <div class="level-icon" id="lvIcon">🌱</div>
+        <div class="level-info">
+          <div class="level-name" id="lvName">Seedling</div>
+          <div style="font-size:12px;color:#7A7569" id="lvSub"></div>
+          <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:28px;font-weight:600" id="stuPct">0%</div>
+          <div style="font-size:11px;color:#7A7569">complete</div>
+        </div>
+      </div>
+      <div class="g3" id="stuStats" style="margin-bottom:1.5rem"></div>
+      <div class="section-title">Continue reflecting</div>
+      <div id="dashPending"></div>
+    </div>
+    <div id="tsReflect" class="tab-panel">
+      <div id="reflectList"></div>
+    </div>
+    <div id="tsNotes" class="tab-panel">
+      <div id="notesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REFLECTION MODAL ==================== -->
+<div id="reflectModal" class="modal-bg" onclick="bgClose(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="badge badge-blue" id="mChapter"></span>
+    <div style="font-family:'DM Serif Display',serif;font-size:20px;margin:8px 0 4px" id="mTopic"></div>
+    <div style="font-size:12px;color:#7A7569;margin-bottom:1rem" id="mCohort"></div>
+    <div class="alert alert-info" id="mPrompt" style="margin-bottom:1rem"></div>
+    <label class="lbl">Your reflection</label>
+    <textarea id="mText" rows="5" placeholder="Write in your own words…"></textarea>
+    <label class="lbl">Confidence level</label>
+    <div class="conf-row">
+      <button class="conf-btn" id="cLow"  onclick="setConf('low')">🔴 Not confident</button>
+      <button class="conf-btn" id="cMed"  onclick="setConf('medium')">🟡 Getting there</button>
+      <button class="conf-btn" id="cHigh" onclick="setConf('high')">🟢 Confident</button>
+    </div>
+    <input type="hidden" id="mConf" value="">
+    <label class="lbl">Key exam reminders <span style="font-weight:400;color:#7A7569">(comma-separated)</span></label>
+    <input type="text" id="mKeys" placeholder="e.g. ATP synthesis, light reactions">
+    <div id="mMsg" style="margin-top:10px"></div>
+    <div style="display:flex;gap:10px;margin-top:1.25rem">
+      <button class="btn btn-primary" id="saveRefBtn" onclick="saveReflection()">Save reflection</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add roster modal -->
+<div id="addRosterModal" class="modal-bg" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" onclick="document.getElementById('addRosterModal').classList.remove('on')">✕</button>
+    <div style="font-weight:600;font-size:16px;margin-bottom:1rem">Add student to roster</div>
+    <div id="addRosterMsg"></div>
+    <div class="g2">
+      <div><label class="lbl">Full name</label><input type="text" id="rosterName" placeholder="e.g. Alice Tan"></div>
+      <div><label class="lbl">Class</label><input type="text" id="rosterClass" placeholder="e.g. 4A"></div>
+    </div>
+    <div class="mt16"><button class="btn btn-primary btn-full" onclick="addRosterEntry()">Add to roster</button></div>
+  </div>
+</div>
+
+<!-- CSV import modal -->
+<div id="csvModal" class="modal-bg" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="document.getElementById('csvModal').classList.remove('on')">✕</button>
+    <div style="font-weight:600;font-size:16px;margin-bottom:8px">Import roster from CSV</div>
+    <div class="alert alert-info" style="margin-bottom:1rem;font-size:12px">CSV format: one student per line — <strong>Full Name, Class</strong><br>Example: <code>Alice Tan, 4A</code></div>
+    <div id="csvMsg"></div>
+    <textarea id="csvInput" rows="8" placeholder="Alice Tan, 4A&#10;Bob Lim, 4A&#10;Carol Ng, 4B&#10;David Koh, 4B"></textarea>
+    <div class="mt12"><button class="btn btn-primary btn-full" id="csvImportBtn" onclick="importCsv()">Import</button></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const SUPA_URL = 'https://zjoixilgthyyfqlsovzn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqb2l4aWxndGh5eWZxbHNvdnpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MjY5ODgsImV4cCI6MjA5NTEwMjk4OH0.QADuZeitj0QDNMRuNOLwLWEKq3LqxIJaxmEU8FZUisk';
+const ADMIN_PW = 'teacher2024'; // Change this!
+
+const LEVELS = [
+  {min:0,max:1,name:'Seedling',icon:'🌱'},
+  {min:1,max:3,name:'Sprout',icon:'🌿'},
+  {min:3,max:6,name:'Explorer',icon:'🔭'},
+  {min:6,max:10,name:'Thinker',icon:'💡'},
+  {min:10,max:15,name:'Scholar',icon:'📖'},
+  {min:15,max:999,name:'Maestro',icon:'🏆'}
+];
+
+// ============================================================
+// SUPABASE API HELPERS
+// ============================================================
+async function sb(path, opts={}) {
+  const url = SUPA_URL + '/rest/v1/' + path;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...(opts.headers||{})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.message || err.error || ('HTTP '+res.status));
+  }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : [];
+}
+const api = {
+  get:    (t, q='')   => sb(t + (q?'?'+q:''), {method:'GET', prefer:''}),
+  post:   (t, d)      => sb(t, {method:'POST', body:JSON.stringify(d)}),
+  patch:  (t, q, d)   => sb(t+'?'+q, {method:'PATCH', body:JSON.stringify(d)}),
+  delete: (t, q)      => sb(t+'?'+q, {method:'DELETE', prefer:''}),
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let me = null; // logged-in student {id, username, full_name, class}
+let allTopics = [];
+let myReflections = {}; // topic_id → reflection row
+let modalTopicId = null;
+let rosterCache = [];
+
+// ============================================================
+// PAGE / TAB NAV
+// ============================================================
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function adminTab(panel, idx) {
+  document.querySelectorAll('#pgAdmin .tab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById(panel).classList.add('on');
+  document.querySelectorAll('#adminTabBar .tab-btn').forEach((b,i)=>b.classList.toggle('on',i===idx));
+  if(panel==='taOverview')   loadAdminDashboard();
+  if(panel==='taRoster')     loadRoster();
+  if(panel==='taCurriculum') loadCurriculum();
+  if(panel==='taByStudent')  initByStudent();
+  if(panel==='taByTopic')    initByTopic();
+}
+function stuTab(panel, idx) {
+  document.querySelectorAll('#pgStudent .tab-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById(panel).classList.add('on');
+  document.querySelectorAll('#stuTabBar .tab-btn').forEach((b,i)=>b.classList.toggle('on',i===idx));
+  if(panel==='tsDash')    renderDash();
+  if(panel==='tsReflect') renderReflectList();
+  if(panel==='tsNotes')   renderNotes();
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginBtn');
+  if(!u||!p){msg.innerHTML='<div class="alert alert-err">Enter username and password.</div>';return;}
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Logging in…';
+  try {
+    const rows = await api.get('students','username=eq.'+encodeURIComponent(u)+'&select=*');
+    if(!rows.length || rows[0].password !== p) {
+      msg.innerHTML='<div class="alert alert-err">Incorrect username or password.</div>';
+      return;
+    }
+    me = rows[0];
+    msg.innerHTML='';
+    document.getElementById('stuAvatar').textContent = initials(me.full_name);
+    document.getElementById('stuNameTop').textContent = me.full_name;
+    document.getElementById('stuClassTop').textContent = 'Class '+me.class;
+    await loadTopicsAndReflections();
+    goPage('pgStudent');
+    stuTab('tsDash',0);
+  } catch(e) {
+    msg.innerHTML='<div class="alert alert-err">Error: '+e.message+'</div>';
+  } finally {
+    btn.disabled=false; btn.textContent='Log in';
+  }
+}
+
+async function doRegister() {
+  const name  = document.getElementById('regName').value.trim();
+  const cls   = document.getElementById('regClass').value.trim().toUpperCase();
+  const user  = document.getElementById('regUser').value.trim().toLowerCase().replace(/\s/g,'');
+  const pass  = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const msg   = document.getElementById('regMsg');
+  const btn   = document.getElementById('regBtn');
+  msg.innerHTML='';
+  if(!name||!cls||!user||!pass) {msg.innerHTML='<div class="alert alert-err">Fill in all fields.</div>';return;}
+  if(pass.length<6) {msg.innerHTML='<div class="alert alert-err">Password must be at least 6 characters.</div>';return;}
+  if(pass!==pass2) {msg.innerHTML='<div class="alert alert-err">Passwords do not match.</div>';return;}
+  if(/\s/.test(user)) {msg.innerHTML='<div class="alert alert-err">Username cannot contain spaces.</div>';return;}
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Checking roster…';
+  try {
+    // Check roster
+    const roster = await api.get('roster',
+      'full_name=ilike.'+encodeURIComponent(name)+'&class=ilike.'+encodeURIComponent(cls)+'&has_registered=eq.false');
+    if(!roster.length) {
+      msg.innerHTML='<div class="alert alert-err">Your name and class were not found on the roster, or your account has already been created. Please check with your teacher.</div>';
+      return;
+    }
+    // Check username not taken
+    const existing = await api.get('students','username=eq.'+encodeURIComponent(user));
+    if(existing.length) {msg.innerHTML='<div class="alert alert-err">That username is already taken. Try another.</div>';return;}
+    // Create student
+    const newStu = await api.post('students',{
+      username: user, password: pass,
+      full_name: name, class: cls,
+      roster_id: roster[0].id
+    });
+    // Mark roster as registered
+    await api.patch('roster','id=eq.'+roster[0].id, {has_registered:true});
+    msg.innerHTML='<div class="alert alert-ok">✓ Account created! You can now log in.</div>';
+    setTimeout(()=>{ goPage('pgLogin'); document.getElementById('loginUser').value=user; }, 1800);
+  } catch(e) {
+    msg.innerHTML='<div class="alert alert-err">Error: '+e.message+'</div>';
+  } finally {
+    btn.disabled=false; btn.textContent='Create account';
+  }
+}
+
+function doAdminLogin() {
+  const p = document.getElementById('adminPassInput').value;
+  const msg = document.getElementById('adminLoginMsg');
+  if(p !== ADMIN_PW) {msg.innerHTML='<div class="alert alert-err">Incorrect admin password.</div>';return;}
+  msg.innerHTML='';
+  goPage('pgAdmin');
+  adminTab('taOverview',0);
+}
+
+function doLogout() {
+  me=null; allTopics=[]; myReflections={};
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginMsg').innerHTML='';
+  goPage('pgLogin');
+}
+
+// ============================================================
+// ADMIN — DASHBOARD
+// ============================================================
+async function loadAdminDashboard() {
+  document.getElementById('adminStats').innerHTML='<div class="stat"><div class="spinner"></div></div>';
+  try {
+    const [roster, students, topics, reflections] = await Promise.all([
+      api.get('roster','select=id,class,has_registered'),
+      api.get('students','select=id,class'),
+      api.get('topics','select=id,topic_name,chapter'),
+      api.get('reflections','select=id,student_id,topic_id')
+    ]);
+    const total   = roster.length;
+    const regCount= roster.filter(r=>r.has_registered).length;
+    const pending = total - regCount;
+    const totalRef= reflections.length;
+
+    document.getElementById('adminStats').innerHTML=`
+      <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Students on roster</div></div>
+      <div class="stat"><div class="stat-num" style="color:#1B7A4A">${regCount}</div><div class="stat-label">Registered accounts</div></div>
+      <div class="stat"><div class="stat-num" style="color:#92600A">${pending}</div><div class="stat-label">Not yet registered</div></div>
+      <div class="stat"><div class="stat-num" style="color:#3D5AFE">${totalRef}</div><div class="stat-label">Reflections submitted</div></div>`;
+
+    // Class breakdown
+    const classes = [...new Set(roster.map(r=>r.class))].sort();
+    const cbd = document.getElementById('classBreakdown');
+    if(!classes.length){cbd.innerHTML='<div class="empty">No roster data.</div>';}
+    else {
+      cbd.innerHTML = classes.map(cls=>{
+        const tot = roster.filter(r=>r.class===cls).length;
+        const reg = roster.filter(r=>r.class===cls&&r.has_registered).length;
+        const pct = tot ? Math.round(reg/tot*100) : 0;
+        return `<div class="card" style="padding:.9rem 1.25rem;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:500">
+            <span>Class ${cls}</span><span style="color:#7A7569">${reg}/${tot} registered · ${pct}%</span>
+          </div>
+          <div class="bar" style="margin-top:6px"><div class="bar-fill green" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('');
+    }
+
+    // Topic completion
+    const tco = document.getElementById('topicCompletionOverview');
+    if(!topics.length){tco.innerHTML='<div class="empty">No topics yet.</div>';}
+    else {
+      tco.innerHTML = topics.map(t=>{
+        const done = reflections.filter(r=>r.topic_id===t.id).length;
+        const pct  = students.length ? Math.round(done/students.length*100) : 0;
+        return `<div class="card" style="padding:.9rem 1.25rem;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="font-weight:500">${t.topic_name}</span>
+            <span style="color:#7A7569">${done}/${students.length} · ${pct}%</span>
+          </div>
+          <div class="bar" style="margin-top:6px"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('');
+    }
+
+    // Unregistered list
+    const unreg = await api.get('roster','has_registered=eq.false&select=full_name,class&order=class,full_name');
+    const ul = document.getElementById('unregisteredList');
+    if(!unreg.length){ul.innerHTML='<div class="alert alert-ok">✓ All students on the roster have registered!</div>';}
+    else {
+      ul.innerHTML=`<div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Class</th></tr></thead>
+        <tbody>${unreg.map(r=>`<tr><td>${r.full_name}</td><td>${r.class}</td></tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+  } catch(e) {
+    document.getElementById('adminStats').innerHTML='<div class="alert alert-err">'+e.message+'</div>';
+  }
+}
+
+// ============================================================
+// ADMIN — ROSTER
+// ============================================================
+async function loadRoster() {
+  document.getElementById('rosterTbody').innerHTML='<tr><td colspan="5" class="empty"><div class="spinner"></div></td></tr>';
+  try {
+    const [roster, students] = await Promise.all([
+      api.get('roster','select=*&order=class,full_name'),
+      api.get('students','select=id,roster_id,username')
+    ]);
+    rosterCache = roster;
+    const stuMap = {};
+    students.forEach(s=>{ if(s.roster_id) stuMap[s.roster_id]=s.username; });
+
+    // Populate class filter
+    const classes = [...new Set(roster.map(r=>r.class))].sort();
+    const cf = document.getElementById('rosterClassFilter');
+    cf.innerHTML='<option value="">All classes</option>'+classes.map(c=>`<option>${c}</option>`).join('');
+
+    renderRosterTable(roster, stuMap);
+  } catch(e) {
+    document.getElementById('rosterTbody').innerHTML=`<tr><td colspan="5" class="empty">${e.message}</td></tr>`;
+  }
+}
+
+function renderRosterTable(roster, stuMap) {
+  const tbody = document.getElementById('rosterTbody');
+  if(!roster.length){tbody.innerHTML='<tr><td colspan="5" class="empty">No students on roster.</td></tr>';return;}
+  tbody.innerHTML = roster.map(r=>`
+    <tr>
+      <td style="font-weight:500">${r.full_name}</td>
+      <td>${r.class}</td>
+      <td>${r.has_registered
+        ? '<span class="badge badge-green">✓ Registered</span>'
+        : '<span class="badge badge-amber">⏳ Pending</span>'}</td>
+      <td style="font-family:monospace;font-size:12px;color:#7A7569">${stuMap[r.id]||'—'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteRosterEntry('${r.id}','${r.full_name}')">Remove</button></td>
+    </tr>`).join('');
+}
+
+function filterRoster() {
+  const q = document.getElementById('rosterSearch').value.toLowerCase();
+  const cls = document.getElementById('rosterClassFilter').value;
+  const filtered = rosterCache.filter(r=>
+    (!q || r.full_name.toLowerCase().includes(q)) &&
+    (!cls || r.class===cls)
+  );
+  renderRosterTable(filtered, {});
+}
+
+function showAddRosterModal() { document.getElementById('addRosterModal').classList.add('on'); }
+function showCsvModal() { document.getElementById('csvModal').classList.add('on'); }
+
+async function addRosterEntry() {
+  const name = document.getElementById('rosterName').value.trim();
+  const cls  = document.getElementById('rosterClass').value.trim().toUpperCase();
+  const msg  = document.getElementById('addRosterMsg');
+  if(!name||!cls){msg.innerHTML='<div class="alert alert-err">Fill in all fields.</div>';return;}
+  try {
+    await api.post('roster',{full_name:name, class:cls});
+    msg.innerHTML='<div class="alert alert-ok">✓ Added '+name+'</div>';
+    document.getElementById('rosterName').value='';
+    document.getElementById('rosterClass').value='';
+    loadRoster();
+  } catch(e){msg.innerHTML='<div class="alert alert-err">'+e.message+'</div>';}
+}
+
+async function importCsv() {
+  const raw = document.getElementById('csvInput').value.trim();
+  const msg = document.getElementById('csvMsg');
+  const btn = document.getElementById('csvImportBtn');
+  if(!raw){msg.innerHTML='<div class="alert alert-err">Paste CSV data first.</div>';return;}
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const rows = lines.map(l=>{
+    const parts = l.split(',');
+    return {full_name: parts[0].trim(), class: (parts[1]||'').trim().toUpperCase()};
+  }).filter(r=>r.full_name&&r.class);
+  if(!rows.length){msg.innerHTML='<div class="alert alert-err">No valid rows found. Format: Name, Class</div>';return;}
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Importing…';
+  try {
+    await api.post('roster', rows);
+    msg.innerHTML='<div class="alert alert-ok">✓ Imported '+rows.length+' students.</div>';
+    document.getElementById('csvInput').value='';
+    loadRoster();
+  } catch(e){msg.innerHTML='<div class="alert alert-err">'+e.message+'</div>';}
+  finally{btn.disabled=false; btn.textContent='Import';}
+}
+
+async function deleteRosterEntry(id, name) {
+  if(!confirm('Remove '+name+' from roster?'))return;
+  try {
+    await api.delete('roster','id=eq.'+id);
+    loadRoster();
+  } catch(e){alert(e.message);}
+}
+
+// ============================================================
+// ADMIN — CURRICULUM
+// ============================================================
+async function loadCurriculum() {
+  try {
+    const topics = await api.get('topics','select=*&order=sort_order,created_at');
+    document.getElementById('topicCount').textContent=topics.length;
+    const el = document.getElementById('topicAdminList');
+    if(!topics.length){el.innerHTML='<div class="empty">No topics yet. Add one above.</div>';return;}
+    el.innerHTML=topics.map((t,i)=>`
+      <div class="card" style="display:flex;align-items:start;gap:12px;padding:.9rem 1.25rem">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="badge badge-blue">${t.chapter}</span>
+            <strong style="font-size:14px">${t.topic_name}</strong>
+          </div>
+          <div style="font-size:12px;color:#7A7569">${t.prompt}</div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteTopic('${t.id}','${t.topic_name.replace(/'/g,'')}')">Remove</button>
+      </div>`).join('');
+  } catch(e){document.getElementById('topicAdminList').innerHTML='<div class="alert alert-err">'+e.message+'</div>';}
+}
+
+async function addTopic() {
+  const chapter = document.getElementById('newChapter').value.trim();
+  const topic   = document.getElementById('newTopic').value.trim();
+  const prompt  = document.getElementById('newPrompt').value.trim();
+  if(!chapter||!topic||!prompt){alert('Fill in all fields.');return;}
+  const btn = document.getElementById('addTopicBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Adding…';
+  try {
+    await api.post('topics',{chapter, topic_name:topic, prompt, sort_order:Date.now()});
+    document.getElementById('newChapter').value='';
+    document.getElementById('newTopic').value='';
+    document.getElementById('newPrompt').value='';
+    loadCurriculum();
+  } catch(e){alert(e.message);}
+  finally{btn.disabled=false; btn.textContent='Add topic';}
+}
+
+async function deleteTopic(id, name) {
+  if(!confirm('Delete "'+name+'"? Student reflections for this topic will also be deleted.'))return;
+  try { await api.delete('topics','id=eq.'+id); loadCurriculum(); }
+  catch(e){alert(e.message);}
+}
+
+// ============================================================
+// ADMIN — BY STUDENT
+// ============================================================
+async function initByStudent() {
+  try {
+    const [students, classes] = await Promise.all([
+      api.get('students','select=id,full_name,class&order=class,full_name'),
+      api.get('students','select=class')
+    ]);
+    const allClasses = [...new Set(students.map(s=>s.class))].sort();
+    const cf = document.getElementById('stuClassFilter');
+    cf.innerHTML='<option value="">All classes</option>'+allClasses.map(c=>`<option>${c}</option>`).join('');
+    populateStudentPicker(students, '');
+  } catch(e){}
+}
+
+async function loadStudentFilter() {
+  const cls = document.getElementById('stuClassFilter').value;
+  try {
+    const q = cls ? 'class=eq.'+encodeURIComponent(cls)+'&' : '';
+    const students = await api.get('students', q+'select=id,full_name,class&order=full_name');
+    populateStudentPicker(students, cls);
+    document.getElementById('studentResponses').innerHTML='';
+  } catch(e){}
+}
+
+function populateStudentPicker(students, cls) {
+  const sel = document.getElementById('stuPicker');
+  sel.innerHTML='<option value="">Select a student…</option>'+
+    students.map(s=>`<option value="${s.id}">${s.full_name} (${s.class})</option>`).join('');
+}
+
+async function loadStudentResponses() {
+  const stuId = document.getElementById('stuPicker').value;
+  const el = document.getElementById('studentResponses');
+  if(!stuId){el.innerHTML='';return;}
+  el.innerHTML='<div class="empty"><div class="spinner"></div></div>';
+  try {
+    const [topics, refs] = await Promise.all([
+      api.get('topics','select=*&order=sort_order,created_at'),
+      api.get('reflections','student_id=eq.'+stuId+'&select=*')
+    ]);
+    const refMap = {};
+    refs.forEach(r=>refMap[r.topic_id]=r);
+    const chapters = [...new Set(topics.map(t=>t.chapter))];
+    const confMap = {low:'🔴 Not confident',medium:'🟡 Getting there',high:'🟢 Confident'};
+    let html='';
+    chapters.forEach(ch=>{
+      const items = topics.filter(t=>t.chapter===ch);
+      html+=`<div class="ch-label">${ch}</div>`;
+      items.forEach(t=>{
+        const r=refMap[t.id];
+        if(r){
+          html+=`<div class="response-card">
+            <div class="rc-header">
+              <span class="badge badge-blue">${t.chapter}</span>
+              <strong style="font-size:14px">${t.topic_name}</strong>
+              <span class="badge badge-${r.confidence==='high'?'green':r.confidence==='medium'?'amber':'red'}" style="margin-left:auto">${confMap[r.confidence]||''}</span>
+            </div>
+            <div class="rc-body">${r.reflection_text}</div>
+            ${r.key_points?`<div class="review-tags" style="margin-top:8px">${r.key_points.split(',').map(k=>`<span class="review-tag">📌 ${k.trim()}</span>`).join('')}</div>`:''}
+            <div style="font-size:11px;color:#7A7569;margin-top:8px">${new Date(r.created_at).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>`;
+        } else {
+          html+=`<div class="card" style="padding:.9rem 1.25rem;display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:16px">⭕</span>
+            <span style="font-size:13px;color:#7A7569">${t.topic_name} — not yet completed</span>
+          </div>`;
+        }
+      });
+    });
+    el.innerHTML=html||'<div class="empty">No topics found.</div>';
+  } catch(e){el.innerHTML='<div class="alert alert-err">'+e.message+'</div>';}
+}
+
+// ============================================================
+// ADMIN — BY TOPIC
+// ============================================================
+async function initByTopic() {
+  try {
+    const [topics, students] = await Promise.all([
+      api.get('topics','select=*&order=sort_order,created_at'),
+      api.get('students','select=class')
+    ]);
+    const tp = document.getElementById('topicPicker');
+    tp.innerHTML='<option value="">Select a topic…</option>'+
+      topics.map(t=>`<option value="${t.id}">${t.chapter} — ${t.topic_name}</option>`).join('');
+    const classes = [...new Set(students.map(s=>s.class))].sort();
+    const cf = document.getElementById('topicClassFilter');
+    cf.innerHTML='<option value="">All classes</option>'+classes.map(c=>`<option>${c}</option>`).join('');
+  } catch(e){}
+}
+
+async function loadTopicResponses() {
+  const topicId = document.getElementById('topicPicker').value;
+  const cls     = document.getElementById('topicClassFilter').value;
+  const conf    = document.getElementById('topicConfFilter').value;
+  const el = document.getElementById('topicResponses');
+  const ts = document.getElementById('topicStats2');
+  if(!topicId){el.innerHTML='';ts.innerHTML='';return;}
+  el.innerHTML='<div class="empty"><div class="spinner"></div></div>';
+  try {
+    let q = 'topic_id=eq.'+topicId+'&select=*,students(id,full_name,class)';
+    const refs = await api.get('reflections', q+'&order=created_at');
+    let filtered = refs;
+    if(cls)  filtered=filtered.filter(r=>r.students?.class===cls);
+    if(conf) filtered=filtered.filter(r=>r.confidence===conf);
+
+    // Stats bar
+    const total = refs.length;
+    const hi  = refs.filter(r=>r.confidence==='high').length;
+    const med = refs.filter(r=>r.confidence==='medium').length;
+    const lo  = refs.filter(r=>r.confidence==='low').length;
+    ts.innerHTML=`<div class="g3" style="margin-bottom:1rem">
+      <div class="stat"><div class="stat-num" style="color:#1B7A4A">${hi}</div><div class="stat-label">🟢 Confident</div></div>
+      <div class="stat"><div class="stat-num" style="color:#92600A">${med}</div><div class="stat-label">🟡 Getting there</div></div>
+      <div class="stat"><div class="stat-num" style="color:#9B2335">${lo}</div><div class="stat-label">🔴 Not confident</div></div>
+    </div>`;
+
+    if(!filtered.length){el.innerHTML='<div class="empty">No responses match the filters.</div>';return;}
+    const confMap={low:'🔴 Not confident',medium:'🟡 Getting there',high:'🟢 Confident'};
+    el.innerHTML=filtered.map(r=>`
+      <div class="response-card">
+        <div class="rc-header">
+          <div class="avatar" style="font-size:11px">${initials(r.students?.full_name||'?')}</div>
+          <div>
+            <div style="font-weight:500;font-size:14px">${r.students?.full_name||'Unknown'}</div>
+            <div style="font-size:12px;color:#7A7569">Class ${r.students?.class||'—'} · ${new Date(r.created_at).toLocaleDateString('en-SG',{day:'numeric',month:'short'})}</div>
+          </div>
+          <span class="badge badge-${r.confidence==='high'?'green':r.confidence==='medium'?'amber':'red'}" style="margin-left:auto">${confMap[r.confidence]||''}</span>
+        </div>
+        <div class="rc-body">${r.reflection_text}</div>
+        ${r.key_points?`<div class="review-tags" style="margin-top:8px">${r.key_points.split(',').map(k=>`<span class="review-tag">📌 ${k.trim()}</span>`).join('')}</div>`:''}
+      </div>`).join('');
+  } catch(e){el.innerHTML='<div class="alert alert-err">'+e.message+'</div>';}
+}
+
+// ============================================================
+// STUDENT — LOAD DATA
+// ============================================================
+async function loadTopicsAndReflections() {
+  const [topics, refs] = await Promise.all([
+    api.get('topics','select=*&order=sort_order,created_at'),
+    api.get('reflections','student_id=eq.'+me.id+'&select=*')
+  ]);
+  allTopics = topics;
+  myReflections = {};
+  refs.forEach(r=>myReflections[r.topic_id]=r);
+}
+
+// ============================================================
+// STUDENT — DASHBOARD
+// ============================================================
+function renderDash() {
+  const done  = Object.keys(myReflections).length;
+  const total = allTopics.length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  const lv    = getLevel(done);
+  document.getElementById('lvIcon').textContent = lv.icon;
+  document.getElementById('lvName').textContent = lv.name;
+  document.getElementById('lvSub').textContent  = done+' reflection'+(done!==1?'s':'')+' completed';
+  document.getElementById('xpFill').style.width = pct+'%';
+  document.getElementById('stuPct').textContent  = pct+'%';
+  document.getElementById('stuStats').innerHTML=`
+    <div class="stat"><div class="stat-num">${done}</div><div class="stat-label">Done</div></div>
+    <div class="stat"><div class="stat-num">${total-done}</div><div class="stat-label">Remaining</div></div>
+    <div class="stat"><div class="stat-num">${pct}%</div><div class="stat-label">Progress</div></div>`;
+  const pending = allTopics.filter(t=>!myReflections[t.id]).slice(0,4);
+  const el = document.getElementById('dashPending');
+  if(!total){el.innerHTML='<div class="empty">Your teacher has not added any topics yet.</div>';return;}
+  if(!pending.length){el.innerHTML='<div class="alert alert-ok">🎉 You have completed all reflections! Great work.</div>';return;}
+  el.innerHTML=pending.map(t=>`
+    <div class="topic-card" onclick="openModal('${t.id}')">
+      <div style="font-weight:500;font-size:14px">${t.topic_name} <span class="badge badge-blue" style="margin-left:4px">${t.chapter}</span></div>
+      <div style="font-size:12px;color:#7A7569;margin-top:4px">${t.prompt.slice(0,90)}…</div>
+    </div>`).join('');
+}
+
+function renderReflectList() {
+  const el = document.getElementById('reflectList');
+  if(!allTopics.length){el.innerHTML='<div class="empty">No topics yet.</div>';return;}
+  const chapters=[...new Set(allTopics.map(t=>t.chapter))];
+  const confE={low:'🔴',medium:'🟡',high:'🟢'};
+  el.innerHTML=chapters.map(ch=>{
+    const items=allTopics.filter(t=>t.chapter===ch);
+    return `<div class="ch-label">${ch}</div>`+items.map(t=>{
+      const done=!!myReflections[t.id];
+      const r=myReflections[t.id];
+      return `<div class="topic-card${done?' done':''}" onclick="openModal('${t.id}')">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">${done?'✅':'⭕'}</span>
+          <span style="font-weight:500;font-size:14px">${t.topic_name}</span>
+          ${done&&r?.confidence?`<span style="margin-left:auto">${confE[r.confidence]}</span>`:''}
+        </div>
+        <div style="font-size:12px;color:#7A7569;margin-top:4px">${t.prompt.slice(0,80)}…</div>
+      </div>`;
+    }).join('');
+  }).join('');
+}
+
+function renderNotes() {
+  const el = document.getElementById('notesList');
+  const done = allTopics.filter(t=>myReflections[t.id]);
+  if(!done.length){el.innerHTML='<div class="empty">No reflections yet. Go to Reflect to start.</div>';return;}
+  const confMap={low:'🔴 Not confident',medium:'🟡 Getting there',high:'🟢 Confident'};
+  el.innerHTML=done.map(t=>{
+    const r=myReflections[t.id];
+    const tags=r.key_points?r.key_points.split(',').map(k=>k.trim()).filter(Boolean):[];
+    return `<div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="badge badge-blue">${t.chapter}</span>
+        <strong style="font-size:14px">${t.topic_name}</strong>
+        <span class="badge badge-${r.confidence==='high'?'green':r.confidence==='medium'?'amber':'red'}" style="margin-left:auto">${confMap[r.confidence]||''}</span>
+      </div>
+      <p style="font-size:13px;color:#444;line-height:1.7">${r.reflection_text}</p>
+      ${tags.length?`<div class="review-tags">${tags.map(k=>`<span class="review-tag">📌 ${k}</span>`).join('')}</div>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <span style="font-size:11px;color:#7A7569">${new Date(r.created_at).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})}</span>
+        <button class="btn btn-sm" onclick="openModal('${t.id}')">✏ Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// REFLECTION MODAL
+// ============================================================
+async function openModal(topicId) {
+  modalTopicId = topicId;
+  const t = allTopics.find(x=>x.id===topicId);
+  const r = myReflections[topicId];
+  document.getElementById('mChapter').textContent = t.chapter;
+  document.getElementById('mTopic').textContent   = t.topic_name;
+  document.getElementById('mPrompt').textContent  = t.prompt;
+  document.getElementById('mText').value           = r ? r.reflection_text : '';
+  document.getElementById('mKeys').value           = r ? (r.key_points||'') : '';
+  document.getElementById('mConf').value           = r ? r.confidence : '';
+  document.getElementById('mMsg').innerHTML        = '';
+  ['low','medium','high'].forEach(c=>{
+    const btn=document.getElementById(c==='medium'?'cMed':c==='low'?'cLow':'cHigh');
+    btn.className='conf-btn'+(r&&r.confidence===c?' '+(c==='medium'?'med':c):'');
+  });
+  // Load cohort count
+  try {
+    const refs = await api.get('reflections','topic_id=eq.'+topicId+'&select=id', '');
+    const stuCount = await api.get('students','select=id', '');
+    document.getElementById('mCohort').textContent =
+      refs.length+' out of '+stuCount.length+' students in your cohort have completed this.';
+  } catch(e){ document.getElementById('mCohort').textContent=''; }
+  document.getElementById('reflectModal').classList.add('on');
+}
+
+function closeModal(){document.getElementById('reflectModal').classList.remove('on');}
+function bgClose(e){if(e.target===document.getElementById('reflectModal'))closeModal();}
+function setConf(v){
+  document.getElementById('mConf').value=v;
+  document.getElementById('cLow').className ='conf-btn'+(v==='low'?' low':'');
+  document.getElementById('cMed').className ='conf-btn'+(v==='medium'?' med':'');
+  document.getElementById('cHigh').className='conf-btn'+(v==='high'?' high':'');
+}
+
+async function saveReflection() {
+  const text = document.getElementById('mText').value.trim();
+  const conf = document.getElementById('mConf').value;
+  const keys = document.getElementById('mKeys').value.trim();
+  const msg  = document.getElementById('mMsg');
+  if(!text){msg.innerHTML='<div class="alert alert-err">Please write your reflection.</div>';return;}
+  if(!conf){msg.innerHTML='<div class="alert alert-err">Please select a confidence level.</div>';return;}
+  const btn = document.getElementById('saveRefBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Saving…';
+  try {
+    const existing = myReflections[modalTopicId];
+    if(existing) {
+      const updated = await api.patch('reflections','id=eq.'+existing.id,{
+        reflection_text:text, confidence:conf, key_points:keys, updated_at:new Date().toISOString()
+      });
+      myReflections[modalTopicId]={...existing,reflection_text:text,confidence:conf,key_points:keys};
+    } else {
+      const created = await api.post('reflections',{
+        student_id:me.id, topic_id:modalTopicId,
+        reflection_text:text, confidence:conf, key_points:keys
+      });
+      myReflections[modalTopicId]=Array.isArray(created)?created[0]:created;
+    }
+    closeModal();
+    stuTab('tsDash',0);
+  } catch(e){msg.innerHTML='<div class="alert alert-err">Error: '+e.message+'</div>';}
+  finally{btn.disabled=false; btn.textContent='Save reflection';}
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function initials(n){return(n||'?').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();}
+function getLevel(n){for(const l of LEVELS)if(n>=l.min&&n<l.max)return l;return LEVELS[LEVELS.length-1];}
+
+// Keyboard shortcuts
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('adminPassInput').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
